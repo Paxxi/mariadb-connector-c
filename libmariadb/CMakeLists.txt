@@ -444,9 +444,9 @@ IF(NOT WIN32)
   SET_TARGET_PROPERTIES(mariadbclient PROPERTIES OUTPUT_NAME "${LIBMARIADB_STATIC_NAME}")
 ENDIF()
 
-INSTALL(TARGETS mariadbclient
-          COMPONENT Development
-          DESTINATION ${INSTALL_LIBDIR})
+# INSTALL(TARGETS mariadbclient
+#           COMPONENT Development
+#           DESTINATION ${INSTALL_LIBDIR})
 INSTALL(TARGETS libmariadb
           COMPONENT SharedLibraries
         DESTINATION ${INSTALL_LIBDIR})
