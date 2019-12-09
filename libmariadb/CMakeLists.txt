@@ -399,6 +399,7 @@ ELSE()
 ENDIF()
 
 TARGET_LINK_LIBRARIES(libmariadb ${SYSTEM_LIBS})
+TARGET_COMPILE_OPTIONS(libmariadb PRIVATE /sdl-)
 
 SIGN_TARGET(libmariadb)
 

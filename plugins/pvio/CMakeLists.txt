@@ -23,5 +23,6 @@ IF(WIN32)
                 TYPE MARIADB_CLIENT_PLUGIN_PVIO
                 CONFIGURATIONS STATIC DYNAMIC DEFAULT
                 DEFAULT DYNAMIC
+                COMPILE_OPTIONS /sdl-
                 SOURCES ${CC_SOURCE_DIR}/plugins/pvio/pvio_shmem.c)
 ENDIF()
