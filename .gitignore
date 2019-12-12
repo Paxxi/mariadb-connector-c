@@ -108,3 +108,4 @@ RelWithDebInfo
 
 #vim backups
 *.*~
+build*/

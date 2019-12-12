@@ -26,6 +26,7 @@ REGISTER_PLUGIN(TARGET mysql_native_password
                 DEFAULT STATIC
                 SOURCES ${CC_SOURCE_DIR}/plugins/auth/my_auth.c)
 
+if(NOT WINDOWS_STORE)
 #Dialog client authentication plugin
 REGISTER_PLUGIN(TARGET dialog
                 TYPE MARIADB_CLIENT_PLUGIN_AUTH
@@ -33,6 +34,7 @@ REGISTER_PLUGIN(TARGET dialog
                 DEFAULT DYNAMIC
                 SOURCES ${CC_SOURCE_DIR}/plugins/auth/dialog.c
                         ${CC_SOURCE_DIR}/libmariadb/get_password.c)
+endif(NOT WINDOWS_STORE)
 
 
 # Crypto plugins

@@ -29,6 +29,10 @@
 #include <io.h>
 #include "shlwapi.h"
 
+#ifdef MS_APP
+#include <uwp_compat/path.h>
+#endif
+
 static const char *ini_exts[]= {"ini", "cnf", 0};
 #define R_OK 4
 #else
@@ -75,6 +79,7 @@ char **get_default_configuration_dirs()
 {
 #ifdef _WIN32
   char dirname[FN_REFLEN];
+  char* path = NULL;
 #endif
   char *env;
 
@@ -89,6 +94,29 @@ char **get_default_configuration_dirs()
      3. Windows directory
      4. C:\
   */
+
+#ifdef MS_APP
+  path = uwp_get_system_u8();
+  if (path == NULL ||
+      add_cfg_dir(configuration_dirs, path))
+    goto error;
+
+  free(path);
+  path = uwp_get_windows_u8();
+  if (path == NULL ||
+      add_cfg_dir(configuration_dirs, path))
+    goto error;
+
+  if (add_cfg_dir(configuration_dirs, "C:"))
+    goto error;
+
+  free(path);
+  path = uwp_executable_directory_u8();
+  if (path == NULL ||
+      add_cfg_dir(configuration_dirs, path))
+    goto error;
+  free(path);
+#else
 
   if (!GetSystemWindowsDirectory(dirname, FN_REFLEN) ||
       add_cfg_dir(configuration_dirs, dirname))
@@ -107,6 +135,7 @@ char **get_default_configuration_dirs()
     if (add_cfg_dir(configuration_dirs, dirname))
       goto error;
   }
+#endif
 #else
   /* on *nix platforms configuration files are stored in
      1. SYSCONFDIR (if build happens inside server package, or
@@ -131,6 +160,10 @@ char **get_default_configuration_dirs()
 end:
   return configuration_dirs;
 error:
+#ifdef _WIN32
+  if (path != NULL)
+    free(path);
+#endif
   return NULL;
 }
 

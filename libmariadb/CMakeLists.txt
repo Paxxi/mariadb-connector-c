@@ -386,20 +386,27 @@ IF(WIN32)
                    "FILE_DESCRIPTION:Dynamic lib for client/server communication")
 ENDIF()
 
+FIND_PACKAGE(uwp_compat REQUIRED NO_MODULE)
 ADD_LIBRARY(mariadbclient STATIC  ${MARIADB_OBJECTS} ${EMPTY_FILE})
-TARGET_LINK_LIBRARIES(mariadbclient ${SYSTEM_LIBS})
+TARGET_LINK_LIBRARIES(mariadbclient uwp_compat::uwp_compat ${SYSTEM_LIBS})
+TARGET_COMPILE_OPTIONS(mariadbclient PRIVATE /sdl-)
 
 IF(UNIX)
   ADD_LIBRARY(libmariadb SHARED ${libmariadb_RC} ${MARIADB_OBJECTS} ${EMPTY_FILE})
   SET_TARGET_PROPERTIES(libmariadb PROPERTIES COMPILE_FLAGS "${CMAKE_SHARED_LIBRARY_C_FLAGS}")
 ELSE()
   ADD_LIBRARY(libmariadb SHARED ${libmariadb_RC} mariadbclient.def)
-  TARGET_LINK_LIBRARIES(libmariadb  mariadbclient)
+  TARGET_LINK_LIBRARIES(libmariadb mariadbclient)
   SET_TARGET_PROPERTIES(libmariadb PROPERTIES LINKER_LANGUAGE C)
 ENDIF()
 
-TARGET_LINK_LIBRARIES(libmariadb ${SYSTEM_LIBS})
+TARGET_LINK_LIBRARIES(libmariadb uwp_compat::uwp_compat ${SYSTEM_LIBS})
 TARGET_COMPILE_OPTIONS(libmariadb PRIVATE /sdl-)
+if (WINDOWS_STORE)
+  target_compile_definitions(mariadbclient PRIVATE MS_APP)
+  target_compile_definitions(libmariadb PRIVATE MS_APP)
+endif()
+
 
 SIGN_TARGET(libmariadb)
 

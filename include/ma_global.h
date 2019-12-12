@@ -1069,9 +1069,13 @@ do { doubleget_union _tmp; \
 
 #ifdef HAVE_DLOPEN
 #ifdef _WIN32
+#ifdef MS_APP
+#include <uwp_compat/dlfcn.h>
+#else
 #define dlsym(lib, name) GetProcAddress((HMODULE)lib, name)
 #define dlopen(libname, unused) LoadLibraryEx(libname, NULL, 0)
 #define dlclose(lib) FreeLibrary((HMODULE)lib)
+#endif
 #elif defined(HAVE_DLFCN_H)
 #include <dlfcn.h>
 #endif

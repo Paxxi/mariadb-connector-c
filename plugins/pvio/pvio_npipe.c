@@ -30,6 +30,11 @@
 #include <string.h>
 #include <ma_string.h>
 
+#ifdef MS_APP
+#include <uwp_compat/io.h>
+#include <uwp_compat/encoding.h>
+#endif
+
 /* Function prototypes */
 my_bool pvio_npipe_set_timeout(MARIADB_PVIO *pvio, enum enum_pvio_timeout type, int timeout);
 int pvio_npipe_get_timeout(MARIADB_PVIO *pvio, enum enum_pvio_timeout type);
@@ -225,7 +230,7 @@ my_bool pvio_npipe_connect(MARIADB_PVIO *pvio, MA_PVIO_CINFO *cinfo)
 
   if (cinfo->type == PVIO_TYPE_NAMEDPIPE)
   {
-    char szPipeName[MAX_PATH];
+    wchar_t szPipeName[MAX_PATH];
     ULONGLONG deadline;
     LONGLONG wait_ms;
     DWORD backoff= 0; /* Avoid busy wait if ERROR_PIPE_BUSY.*/
@@ -234,13 +239,17 @@ my_bool pvio_npipe_connect(MARIADB_PVIO *pvio, MA_PVIO_CINFO *cinfo)
     if (!cinfo->host || !strcmp(cinfo->host,LOCAL_HOST))
       cinfo->host=LOCAL_HOST_NAMEDPIPE;
 
-    szPipeName[MAX_PATH - 1]= 0;
-    snprintf(szPipeName, MAX_PATH - 1, "\\\\%s\\pipe\\%s", cinfo->host, cinfo->unix_socket);
+    wchar_t* host = to_utf16(cinfo->host, 0);
+    wchar_t* unix_socket = to_utf16(cinfo->unix_socket, 0);
+    _snwprintf(szPipeName, MAX_PATH - 1, L"\\\\%s\\pipe\\%s", host, unix_socket);
+    free(host);
+    free(unix_socket);
+    szPipeName[MAX_PATH - 1]= L'\0';
 
     deadline = GetTickCount64() + pvio->timeout[PVIO_CONNECT_TIMEOUT];
     while (1)
     {
-      if ((cpipe->pipe = CreateFile(szPipeName,
+      if ((cpipe->pipe = uwp_create_file_u16(szPipeName,
                                     GENERIC_READ |
                                     GENERIC_WRITE,
                                     0,               /* no sharing */

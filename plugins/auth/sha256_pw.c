@@ -22,8 +22,8 @@
 
 #ifdef _WIN32
 #undef HAVE_GNUTLS
-#undef HAVE_OPENSSL
-#define HAVE_WINCRYPT
+#define HAVE_OPENSSL
+#undef HAVE_WINCRYPT
 #pragma comment(lib, "crypt32.lib")
 #pragma comment(lib, "ws2_32.lib")
 #endif
@@ -44,7 +44,7 @@
 #include <dlfcn.h>
 #endif
 
-#if defined(WIN32)
+#if defined(WIN32) && defined(HAVE_WINCRYPT)
 #include <wincrypt.h>
 #elif defined(HAVE_OPENSSL)
 #include <openssl/rsa.h>
