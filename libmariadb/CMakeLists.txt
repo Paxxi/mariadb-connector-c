@@ -386,8 +386,9 @@ IF(WIN32)
                    "FILE_DESCRIPTION:Dynamic lib for client/server communication")
 ENDIF()
 
+FIND_PACKAGE(uwp_compat REQUIRED NO_MODULE)
 ADD_LIBRARY(mariadbclient STATIC  ${MARIADB_OBJECTS} ${EMPTY_FILE})
-TARGET_LINK_LIBRARIES(mariadbclient ${SYSTEM_LIBS})
+TARGET_LINK_LIBRARIES(mariadbclient uwp_compat::uwp_compat ${SYSTEM_LIBS})
 TARGET_COMPILE_OPTIONS(mariadbclient PRIVATE /sdl-)
 
 IF(UNIX)
@@ -399,14 +400,11 @@ ELSE()
   SET_TARGET_PROPERTIES(libmariadb PROPERTIES LINKER_LANGUAGE C)
 ENDIF()
 
-TARGET_LINK_LIBRARIES(libmariadb ${SYSTEM_LIBS})
+TARGET_LINK_LIBRARIES(libmariadb uwp_compat::uwp_compat ${SYSTEM_LIBS})
 TARGET_COMPILE_OPTIONS(libmariadb PRIVATE /sdl-)
 if (WINDOWS_STORE)
-  FIND_PACKAGE(uwp_compat REQUIRED NO_MODULE)
   target_compile_definitions(mariadbclient PRIVATE MS_APP)
   target_compile_definitions(libmariadb PRIVATE MS_APP)
-  TARGET_LINK_LIBRARIES(mariadbclient uwp_compat::uwp_compat)
-  TARGET_LINK_LIBRARIES(libmariadb uwp_compat::uwp_compat)
 endif()
 
 
