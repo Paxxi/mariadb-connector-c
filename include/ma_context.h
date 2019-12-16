@@ -25,7 +25,7 @@
   (This particular implementation uses Posix ucontext swapcontext().)
 */
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(MS_APP)
 #define MY_CONTEXT_USE_WIN32_FIBERS 1
 #elif defined(__GNUC__) && __GNUC__ >= 3 && defined(__x86_64__) && !defined(__ILP32__)
 #define MY_CONTEXT_USE_X86_64_GCC_ASM
