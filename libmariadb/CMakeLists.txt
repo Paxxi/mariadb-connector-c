@@ -459,11 +459,11 @@ IF(NOT WIN32)
   SET_TARGET_PROPERTIES(mariadbclient PROPERTIES OUTPUT_NAME "${LIBMARIADB_STATIC_NAME}")
 ENDIF()
 
-INSTALL(TARGETS mariadbclient
-          COMPONENT Development
-           RUNTIME DESTINATION bin
-           ARCHIVE DESTINATION lib
-           LIBRARY DESTINATION lib)
+# INSTALL(TARGETS mariadbclient
+#           COMPONENT Development
+#            RUNTIME DESTINATION bin
+#            ARCHIVE DESTINATION lib
+#            LIBRARY DESTINATION lib)
 INSTALL(TARGETS libmariadb
           COMPONENT SharedLibraries
            RUNTIME DESTINATION bin
@@ -475,10 +475,10 @@ IF(WIN32)
    # On Windows, install PDB
    INSTALL(FILES $<TARGET_PDB_FILE:libmariadb> DESTINATION lib
            COMPONENT Development)
-   INSTALL(FILES ${PROJECT_BINARY_DIR}/RelWithDebInfo/mariadbclient.pdb DESTINATION lib
-           CONFIGURATIONS RelWithDebInfo
-           COMPONENT Development)
-   INSTALL(FILES ${PROJECT_BINARY_DIR}/Debug/mariadbclientd.pdb DESTINATION lib
-           CONFIGURATIONS Debug
-           COMPONENT Development)
+  #  INSTALL(FILES ${PROJECT_BINARY_DIR}/RelWithDebInfo/mariadbclient.pdb DESTINATION lib
+  #          CONFIGURATIONS RelWithDebInfo
+  #          COMPONENT Development)
+  #  INSTALL(FILES ${PROJECT_BINARY_DIR}/Debug/mariadbclientd.pdb DESTINATION lib
+  #          CONFIGURATIONS Debug
+  #          COMPONENT Development)
 ENDIF()
