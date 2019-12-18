@@ -400,6 +400,13 @@ ELSE()
   SET_TARGET_PROPERTIES(libmariadb PROPERTIES LINKER_LANGUAGE C)
 ENDIF()
 
+set_target_properties(mariadbclient
+  PROPERTIES
+    COMPILE_PDB_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}
+    COMPILE_PDB_NAME mariadbclient
+    COMPILE_PDB_NAME_DEBUG mariadbclientd
+)
+
 TARGET_LINK_LIBRARIES(libmariadb uwp_compat::uwp_compat ${SYSTEM_LIBS})
 TARGET_COMPILE_OPTIONS(libmariadb PRIVATE /sdl-)
 if (WINDOWS_STORE)
@@ -452,17 +459,26 @@ IF(NOT WIN32)
   SET_TARGET_PROPERTIES(mariadbclient PROPERTIES OUTPUT_NAME "${LIBMARIADB_STATIC_NAME}")
 ENDIF()
 
-# INSTALL(TARGETS mariadbclient
-#           COMPONENT Development
-#           DESTINATION ${INSTALL_LIBDIR})
+INSTALL(TARGETS mariadbclient
+          COMPONENT Development
+           RUNTIME DESTINATION bin
+           ARCHIVE DESTINATION lib
+           LIBRARY DESTINATION lib)
 INSTALL(TARGETS libmariadb
           COMPONENT SharedLibraries
-        DESTINATION ${INSTALL_LIBDIR})
+           RUNTIME DESTINATION bin
+           ARCHIVE DESTINATION lib
+           LIBRARY DESTINATION lib)
 
 
 IF(WIN32)
    # On Windows, install PDB
-   INSTALL(FILES $<TARGET_PDB_FILE:libmariadb> DESTINATION "${INSTALL_LIBDIR}"
-           CONFIGURATIONS Debug RelWithDebInfo
+   INSTALL(FILES $<TARGET_PDB_FILE:libmariadb> DESTINATION lib
+           COMPONENT Development)
+   INSTALL(FILES ${PROJECT_BINARY_DIR}/RelWithDebInfo/mariadbclient.pdb DESTINATION lib
+           CONFIGURATIONS RelWithDebInfo
+           COMPONENT Development)
+   INSTALL(FILES ${PROJECT_BINARY_DIR}/Debug/mariadbclientd.pdb DESTINATION lib
+           CONFIGURATIONS Debug
            COMPONENT Development)
 ENDIF()
